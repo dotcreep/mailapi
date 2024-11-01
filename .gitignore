@@ -1,0 +1,5 @@
+.env
+template/
+tmp/
+mailapi
+vendor/
