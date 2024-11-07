@@ -3,3 +3,4 @@ template/
 tmp/
 mailapi
 vendor/
+.vscode/

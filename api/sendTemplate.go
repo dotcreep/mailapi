@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"mailapi/mail"
 	"mailapi/template"
 	"mailapi/utils"
@@ -60,6 +61,7 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 				"success": false,
 				"message": "Unable to read body",
 			})
+			log.Fatal(err)
 			return
 		}
 		r.Body = io.NopCloser(bytes.NewBuffer(body))
@@ -70,6 +72,7 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 				"success": false,
 				"message": "Invalid email JSON format",
 			})
+			log.Fatal(err)
 			return
 		}
 
@@ -79,6 +82,7 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 				"success": false,
 				"message": "Invalid userData JSON format",
 			})
+			log.Fatal(err)
 			return
 		}
 
@@ -88,6 +92,7 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 				"success": false,
 				"message": "Invalid userCredential JSON format",
 			})
+			log.Fatal(err)
 			return
 		}
 	} else {
@@ -97,6 +102,7 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 				"success": false,
 				"message": "Unable to parse form",
 			})
+			log.Fatal(err)
 			return
 		}
 		email.To = r.FormValue("to")
@@ -113,6 +119,7 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 					"success": false,
 					"message": "File size is too large. Max size is 10MB",
 				})
+				log.Fatal(err)
 				return
 			}
 			file, err := fileHeader.Open()
@@ -121,6 +128,7 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 					"success": false,
 					"message": "Unable open file",
 				})
+				log.Fatal(err)
 				return
 			}
 			defer file.Close()
@@ -131,6 +139,7 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 					"success": false,
 					"message": "Unable create file",
 				})
+				log.Fatal(err)
 				return
 			}
 			defer out.Close()
@@ -139,6 +148,7 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 					"success": false,
 					"message": "Unable save file",
 				})
+				log.Fatal(err)
 				return
 			}
 			email.Attach = append(email.Attach, tempFilePath)
