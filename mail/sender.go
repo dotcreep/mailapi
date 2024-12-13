@@ -9,7 +9,7 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-func SendEmail(to, cc, bcc string, subject string, typeMessage string, body string, attach []string) (string, error) {
+func SendEmail(to, cc, bcc, subject, typeMessage, body string, attach []string) (string, error) {
 	err := env.Load(".env")
 	if err != nil {
 		return "Failed to load .env file", err
@@ -25,6 +25,10 @@ func SendEmail(to, cc, bcc string, subject string, typeMessage string, body stri
 	}
 	if port == 0 {
 		return "Failed to get port from .env file", err
+	}
+	alias := os.Getenv("ALIAS")
+	if alias == "" {
+		return "Failed to get alias from .env file", err
 	}
 	user := os.Getenv("USER")
 	if user == "" {
@@ -42,7 +46,7 @@ func SendEmail(to, cc, bcc string, subject string, typeMessage string, body stri
 	d := gomail.NewDialer(host, port, user, pass)
 
 	m := gomail.NewMessage()
-	m.SetHeader("From", fmt.Sprintf("%s <%s>", senderName, user))
+	m.SetHeader("From", fmt.Sprintf("%s <%s>", senderName, alias))
 	m.SetHeader("To", to)
 	if cc != "" {
 		m.SetHeader("Cc", cc)

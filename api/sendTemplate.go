@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -26,9 +28,12 @@ type EmailTemplate struct {
 }
 
 type UserData struct {
-	NameClient  string `json:"client_name" form:"client_name"`
-	EmailClient string `json:"client_email" form:"client_email"`
-	AppMobile   string `json:"app_mobile_name" form:"app_mobile_name"`
+	NameClient  string   `json:"client_name" form:"client_name"`
+	EmailClient string   `json:"client_email" form:"client_email"`
+	AppMobile   string   `json:"app_mobile_name" form:"app_mobile_name"`
+	Files       []string `json:"file" form:"file"`
+	Reason      string   `json:"reason" form:"reason"`
+	ConfirmURL  string   `json:"url_upload" form:"url_upload"`
 }
 
 type UserCredential struct {
@@ -44,6 +49,7 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 		utils.RespondJSON(w, http.StatusMethodNotAllowed, map[string]interface{}{
 			"success": false,
 			"message": "Method not allowed",
+			"error":   "Method not allowed",
 		})
 		return
 	}
@@ -54,14 +60,16 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 	var userData UserData
 	var userCredential UserCredential
 	var email Email
-	if r.Header.Get("Content-Type") == "application/json" {
+	if strings.Contains(r.Header.Get("Content-Type"), "application/json") {
+
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
 				"success": false,
 				"message": "Unable to read body",
+				"error":   err.Error(),
 			})
-			log.Fatal(err)
+			log.Println(err)
 			return
 		}
 		r.Body = io.NopCloser(bytes.NewBuffer(body))
@@ -71,8 +79,20 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 			utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
 				"success": false,
 				"message": "Invalid email JSON format",
+				"error":   err.Error(),
 			})
-			log.Fatal(err)
+			log.Println(err)
+			return
+		}
+
+		if email.Attach != nil || len(email.Attach) > 0 {
+			err = errors.New("attach not allowed")
+			utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
+				"success": false,
+				"message": "header request is not allowed",
+				"error":   err.Error(),
+			})
+			log.Println(err)
 			return
 		}
 
@@ -81,8 +101,9 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 			utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
 				"success": false,
 				"message": "Invalid userData JSON format",
+				"error":   err.Error(),
 			})
-			log.Fatal(err)
+			log.Println(err)
 			return
 		}
 
@@ -91,8 +112,9 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 			utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
 				"success": false,
 				"message": "Invalid userCredential JSON format",
+				"error":   err.Error(),
 			})
-			log.Fatal(err)
+			log.Println(err)
 			return
 		}
 	} else {
@@ -101,8 +123,9 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 			utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
 				"success": false,
 				"message": "Unable to parse form",
+				"error":   err.Error(),
 			})
-			log.Fatal(err)
+			log.Println(err)
 			return
 		}
 		email.To = r.FormValue("to")
@@ -111,15 +134,17 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 		email.Subject = r.FormValue("subject")
 		email.TypeMessage = r.FormValue("type_message")
 		email.Body = r.FormValue("body")
+		userData.Reason = r.FormValue("Reason")
 		files := r.MultipartForm.File["attach"]
 		for _, fileHeader := range files {
 			size := fileHeader.Size
 			if size > 10*1024*1024 {
 				utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
 					"success": false,
-					"message": "File size is too large. Max size is 10MB",
+					"message": "Failed to upload file",
+					"error":   "File size is too large. Max size is 10MB",
 				})
-				log.Fatal(err)
+				log.Println(err)
 				return
 			}
 			file, err := fileHeader.Open()
@@ -127,8 +152,9 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 				utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
 					"success": false,
 					"message": "Unable open file",
+					"error":   err.Error(),
 				})
-				log.Fatal(err)
+				log.Println(err)
 				return
 			}
 			defer file.Close()
@@ -138,8 +164,9 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 				utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
 					"success": false,
 					"message": "Unable create file",
+					"error":   err.Error(),
 				})
-				log.Fatal(err)
+				log.Println(err)
 				return
 			}
 			defer out.Close()
@@ -147,8 +174,9 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 				utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
 					"success": false,
 					"message": "Unable save file",
+					"error":   err.Error(),
 				})
-				log.Fatal(err)
+				log.Println(err)
 				return
 			}
 			email.Attach = append(email.Attach, tempFilePath)
@@ -159,6 +187,7 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 		utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
 			"success": false,
 			"message": "To field is required",
+			"error":   "To field is required",
 		})
 		return
 	}
@@ -167,6 +196,7 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 		utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
 			"success": false,
 			"message": "Template name is required",
+			"error":   "Template name is required",
 		})
 		return
 	}
@@ -293,6 +323,7 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 	case "rejected":
 		if r.Header.Get("Content-Type") != "application/json" {
 			userData.NameClient = r.FormValue("client_name")
+			userData.Reason = r.FormValue("reason")
 		}
 		if userData.NameClient == "" {
 			utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
@@ -301,9 +332,17 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 			})
 			return
 		}
+		if userData.Reason == "" {
+			utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
+				"success": false,
+				"message": "Reason is required",
+			})
+			return
+		}
 		rejectData := template.RejectTemplate{
 			Name:        userData.NameClient,
 			HomePage:    homePage,
+			Reason:      strings.ToLower(userData.Reason),
 			EmailAdmin:  mailAdmin,
 			Time:        time.Date(getYear, time.January, 1, 0, 0, 0, 0, time.Local),
 			PhoneCenter: phoneCenter,
@@ -328,10 +367,56 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 			PhoneCenter: phoneCenter,
 		}
 		email.Subject, email.Body = template.Approved(approvedData)
+	case "invoice":
+		if strings.Contains(r.Header.Get("Content-Type"), "application/json") {
+			utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
+				"success": false,
+				"message": "Header is not allowed",
+				"error":   "header 'Content-Type' is not supported, use 'Form Data' instead",
+			})
+			return
+		}
+		if r.Header.Get("Content-Type") != "application/json" {
+			userData.Files = email.Attach
+			userData.ConfirmURL = r.FormValue("url_upload")
+		}
+		if userData.NameClient == "" {
+			utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
+				"success": false,
+				"message": "Client name is required",
+			})
+			return
+		}
+		if len(userData.Files) == 0 {
+			utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
+				"success": false,
+				"message": "Attachment is required",
+			})
+			return
+		}
+		if userData.ConfirmURL == "" {
+			utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
+				"success": false,
+				"message": "URL upload is required",
+			})
+			return
+		}
+		invoiceData := template.InvoiceData{
+			Name:        userData.NameClient,
+			HomePage:    homePage,
+			EmailAdmin:  mailAdmin,
+			Time:        time.Date(getYear, time.January, 1, 0, 0, 0, 0, time.Local),
+			Month:       time.Now().Month(),
+			Year:        time.Now().Year(),
+			PhoneCenter: phoneCenter,
+			ConfirmURL:  userData.ConfirmURL,
+		}
+		email.Subject, email.Body = template.Invoice(invoiceData)
 	default:
 		utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
 			"success": false,
 			"message": "Template not found",
+			"error":   "Template not found",
 		})
 		return
 	}
@@ -342,7 +427,8 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.RespondJSON(w, http.StatusUnprocessableEntity, map[string]interface{}{
 			"success": false,
-			"message": err.Error(),
+			"message": "Failed to send email",
+			"error":   err.Error(),
 		})
 		return
 	}
@@ -354,5 +440,6 @@ func SendEmailTemplate(w http.ResponseWriter, r *http.Request) {
 	utils.RespondJSON(w, http.StatusOK, map[string]interface{}{
 		"success": true,
 		"message": info,
+		"error":   nil,
 	})
 }
