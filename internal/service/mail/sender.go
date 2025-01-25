@@ -2,44 +2,44 @@ package mail
 
 import (
 	"fmt"
-	"mailapi/env"
 	"os"
 	"strconv"
 
+	"github.com/dotcreep/mailapi/internal/utils"
 	"gopkg.in/gomail.v2"
 )
 
 func SendEmail(to, cc, bcc, subject, typeMessage, body string, attach []string) (string, error) {
-	err := env.Load(".env")
+	cfg, err := utils.OpenYAML()
 	if err != nil {
-		return "Failed to load .env file", err
+		return "Failed to open yaml file", err
 	}
-
-	host := os.Getenv("HOST")
+	host := cfg.Server.Host
 	if host == "" {
 		return "Failed to get host from .env file", err
 	}
-	port, err := strconv.Atoi(os.Getenv("PORT"))
+	portint := cfg.Server.Port
+	port, err := strconv.Atoi(portint)
 	if err != nil {
-		return "Failed to convert port to int", err
+		return "Failed to get port from .env file", err
 	}
 	if port == 0 {
 		return "Failed to get port from .env file", err
 	}
-	alias := os.Getenv("ALIAS")
+	alias := cfg.Account.Alias
 	if alias == "" {
 		return "Failed to get alias from .env file", err
 	}
-	user := os.Getenv("USER")
+	user := cfg.Account.Username
 	if user == "" {
 		return "Failed to get user from .env file", err
 	}
-	pass := os.Getenv("PASS")
+	pass := cfg.Account.Password
 	if pass == "" {
 		return "Failed to get pass from .env file", err
 	}
 
-	senderName := os.Getenv("SENDER_NAME")
+	senderName := cfg.Account.UsernameSender
 	if senderName == "" {
 		return "Failed to get 'from' value from .env file", err
 	}

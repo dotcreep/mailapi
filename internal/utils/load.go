@@ -1,4 +1,4 @@
-package env
+package utils
 
 import (
 	"bufio"
@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func Load(file string) error {
+func LoadENV(file string) error {
 	err := loadFile(file)
 	if err != nil {
 		return err

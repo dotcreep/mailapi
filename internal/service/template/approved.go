@@ -2,11 +2,14 @@ package template
 
 import (
 	"bytes"
+	_ "embed"
 	"html/template"
+	"log"
 	"time"
 )
 
-var approvedTemplate = `<p>Approved</p>`
+//go:embed approved.html
+var approvedTemplate string
 
 type ApprovedData struct {
 	EmailAdmin  string
@@ -17,11 +20,12 @@ type ApprovedData struct {
 }
 
 func Approved(data ApprovedData) (string, string) {
-	subject := "Aprroved"
+	subject := "Pendaftaran Telah Disetujui"
 	tmp := template.Must(template.New("approved").Parse(approvedTemplate))
 	var body bytes.Buffer
 	err := tmp.Execute(&body, data)
 	if err != nil {
+		log.Println(err)
 		return "", ""
 	}
 	return subject, body.String()

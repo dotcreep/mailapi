@@ -1,0 +1,601 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Documentation for Postmail",
+        "title": "Postmail API",
+        "contact": {},
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0"
+    },
+    "basePath": "/",
+    "paths": {
+        "/send/template/approved": {
+            "post": {
+                "security": [
+                    {
+                        "X-Auth-Key": []
+                    }
+                ],
+                "description": "Using template Approved",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Send Template"
+                ],
+                "summary": "Send email template - Aprroved",
+                "parameters": [
+                    {
+                        "description": "Body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/utils.Approved"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.BadRequest"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/send/template/credentials": {
+            "post": {
+                "security": [
+                    {
+                        "X-Auth-Key": []
+                    }
+                ],
+                "description": "Using template Credentials",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Send Template"
+                ],
+                "summary": "Send email template - Credentials",
+                "parameters": [
+                    {
+                        "description": "Body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/utils.Credentials"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.BadRequest"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/send/template/invoice": {
+            "post": {
+                "security": [
+                    {
+                        "X-Auth-Key": []
+                    }
+                ],
+                "description": "Using template Invoice Paid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Send Template"
+                ],
+                "summary": "Send email template - Invoice Paid",
+                "parameters": [
+                    {
+                        "description": "Body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/utils.Invoice"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.BadRequest"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/send/template/invoice-paid": {
+            "post": {
+                "security": [
+                    {
+                        "X-Auth-Key": []
+                    }
+                ],
+                "description": "Using template Invoice Paid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Send Template"
+                ],
+                "summary": "Send email template - Invoice Paid",
+                "parameters": [
+                    {
+                        "description": "Body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/utils.InvoicePaid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.BadRequest"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/send/template/registered": {
+            "post": {
+                "security": [
+                    {
+                        "X-Auth-Key": []
+                    }
+                ],
+                "description": "Using template Registered",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Send Template"
+                ],
+                "summary": "Send email template - Registered",
+                "parameters": [
+                    {
+                        "description": "Body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/utils.Registered"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.BadRequest"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/send/template/rejected": {
+            "post": {
+                "security": [
+                    {
+                        "X-Auth-Key": []
+                    }
+                ],
+                "description": "Using template Rejected",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Send Template"
+                ],
+                "summary": "Send email template - Rejected",
+                "parameters": [
+                    {
+                        "description": "Body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/utils.Reject"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.BadRequest"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/send/template/welcome": {
+            "post": {
+                "security": [
+                    {
+                        "X-Auth-Key": []
+                    }
+                ],
+                "description": "Using template Welcome",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Send Template"
+                ],
+                "summary": "Send email template - Welcome",
+                "parameters": [
+                    {
+                        "description": "Body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/utils.Welcome"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.BadRequest"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalServerError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "utils.Approved": {
+            "type": "object",
+            "properties": {
+                "client_name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "to": {
+                    "type": "string",
+                    "example": "mail@example.com"
+                }
+            }
+        },
+        "utils.BadRequest": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "string"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "message"
+                },
+                "result": {
+                    "type": "string",
+                    "example": "null"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "utils.Credentials": {
+            "type": "object",
+            "properties": {
+                "app_mobile_url": {
+                    "type": "string",
+                    "example": "https://fs.example.com/getfile/user/abcd123"
+                },
+                "client_name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "password_merchant": {
+                    "type": "string",
+                    "example": "examplepassword"
+                },
+                "password_superadmin": {
+                    "type": "string",
+                    "example": "examplepassword"
+                },
+                "to": {
+                    "type": "string",
+                    "example": "mail@example.com"
+                },
+                "user_merchant": {
+                    "type": "string",
+                    "example": "exampleusername"
+                },
+                "user_superadmin": {
+                    "type": "string",
+                    "example": "exampleusername"
+                },
+                "website": {
+                    "type": "string",
+                    "example": "https://example.com"
+                }
+            }
+        },
+        "utils.InternalServerError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "message"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "message"
+                },
+                "result": {
+                    "type": "string",
+                    "example": "null"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 500
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "utils.Invoice": {
+            "type": "object",
+            "properties": {
+                "attach": {
+                    "type": "string",
+                    "example": "path/to/file.pdf or file"
+                },
+                "client_name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "to": {
+                    "type": "string",
+                    "example": "mail@example.com"
+                },
+                "url_upload": {
+                    "type": "string",
+                    "example": "https://example.com/upload"
+                }
+            }
+        },
+        "utils.InvoicePaid": {
+            "type": "object",
+            "properties": {
+                "attach": {
+                    "type": "string",
+                    "example": "path/to/file.pdf or file"
+                },
+                "client_name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "invoice_number": {
+                    "type": "integer",
+                    "example": 1234567890
+                },
+                "to": {
+                    "type": "string",
+                    "example": "mail@example.com"
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 100000
+                },
+                "url_upload": {
+                    "type": "string",
+                    "example": "https://example.com/upload"
+                }
+            }
+        },
+        "utils.Registered": {
+            "type": "object",
+            "properties": {
+                "client_name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "to": {
+                    "type": "string",
+                    "example": "mail@example.com"
+                }
+            }
+        },
+        "utils.Reject": {
+            "type": "object",
+            "properties": {
+                "client_name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "reason": {
+                    "type": "string",
+                    "example": "this is my reason"
+                },
+                "to": {
+                    "type": "string",
+                    "example": "mail@example.com"
+                }
+            }
+        },
+        "utils.Success": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "null"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "message"
+                },
+                "result": {
+                    "type": "string",
+                    "example": "message"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "utils.Welcome": {
+            "type": "object",
+            "properties": {
+                "otp": {
+                    "type": "integer",
+                    "example": 1234
+                },
+                "to": {
+                    "type": "string",
+                    "example": "mail@example.com"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "X-Auth-Key": {
+            "description": "Input your token authorized",
+            "type": "apiKey",
+            "name": "X-Auth-Key",
+            "in": "header"
+        }
+    }
+}

@@ -1,0 +1,20 @@
+---
+server:
+  host: mail-server
+  port: 465
+account:
+  username: user-mail-server
+  alias: alias-sender-mail-server
+  password: pass-mail-server
+  username_sender: sender-name
+data_user:
+  email_admin: email-admin
+  homepage: website
+  phone: number
+  guide:
+    admin_merchant: url-to-guide-book-admin-merchant
+    merchant: url-to-guide-book-merchant
+config:
+  port: 9999
+  token: token-auth
+  storage: tmp

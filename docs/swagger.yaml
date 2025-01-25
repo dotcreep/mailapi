@@ -1,0 +1,398 @@
+basePath: /
+definitions:
+  utils.Approved:
+    properties:
+      client_name:
+        example: John Doe
+        type: string
+      to:
+        example: mail@example.com
+        type: string
+    type: object
+  utils.BadRequest:
+    properties:
+      error:
+        example: string
+        type: string
+      message:
+        example: message
+        type: string
+      result:
+        example: "null"
+        type: string
+      status:
+        example: 400
+        type: integer
+      success:
+        example: false
+        type: boolean
+    type: object
+  utils.Credentials:
+    properties:
+      app_mobile_url:
+        example: https://fs.example.com/getfile/user/abcd123
+        type: string
+      client_name:
+        example: John Doe
+        type: string
+      password_merchant:
+        example: examplepassword
+        type: string
+      password_superadmin:
+        example: examplepassword
+        type: string
+      to:
+        example: mail@example.com
+        type: string
+      user_merchant:
+        example: exampleusername
+        type: string
+      user_superadmin:
+        example: exampleusername
+        type: string
+      website:
+        example: https://example.com
+        type: string
+    type: object
+  utils.InternalServerError:
+    properties:
+      error:
+        example: message
+        type: string
+      message:
+        example: message
+        type: string
+      result:
+        example: "null"
+        type: string
+      status:
+        example: 500
+        type: integer
+      success:
+        example: false
+        type: boolean
+    type: object
+  utils.Invoice:
+    properties:
+      attach:
+        example: path/to/file.pdf or file
+        type: string
+      client_name:
+        example: John Doe
+        type: string
+      to:
+        example: mail@example.com
+        type: string
+      url_upload:
+        example: https://example.com/upload
+        type: string
+    type: object
+  utils.InvoicePaid:
+    properties:
+      attach:
+        example: path/to/file.pdf or file
+        type: string
+      client_name:
+        example: John Doe
+        type: string
+      invoice_number:
+        example: 1234567890
+        type: integer
+      to:
+        example: mail@example.com
+        type: string
+      total:
+        example: 100000
+        type: integer
+      url_upload:
+        example: https://example.com/upload
+        type: string
+    type: object
+  utils.Registered:
+    properties:
+      client_name:
+        example: John Doe
+        type: string
+      to:
+        example: mail@example.com
+        type: string
+    type: object
+  utils.Reject:
+    properties:
+      client_name:
+        example: John Doe
+        type: string
+      reason:
+        example: this is my reason
+        type: string
+      to:
+        example: mail@example.com
+        type: string
+    type: object
+  utils.Success:
+    properties:
+      error:
+        example: "null"
+        type: string
+      message:
+        example: message
+        type: string
+      result:
+        example: message
+        type: string
+      status:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  utils.Welcome:
+    properties:
+      otp:
+        example: 1234
+        type: integer
+      to:
+        example: mail@example.com
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Documentation for Postmail
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Postmail API
+  version: "1.0"
+paths:
+  /send/template/approved:
+    post:
+      consumes:
+      - application/json
+      description: Using template Approved
+      parameters:
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/utils.Approved'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/utils.Success'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/utils.BadRequest'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.InternalServerError'
+      security:
+      - X-Auth-Key: []
+      summary: Send email template - Aprroved
+      tags:
+      - Send Template
+  /send/template/credentials:
+    post:
+      consumes:
+      - application/json
+      description: Using template Credentials
+      parameters:
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/utils.Credentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/utils.Success'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/utils.BadRequest'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.InternalServerError'
+      security:
+      - X-Auth-Key: []
+      summary: Send email template - Credentials
+      tags:
+      - Send Template
+  /send/template/invoice:
+    post:
+      consumes:
+      - application/json
+      description: Using template Invoice Paid
+      parameters:
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/utils.Invoice'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/utils.Success'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/utils.BadRequest'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.InternalServerError'
+      security:
+      - X-Auth-Key: []
+      summary: Send email template - Invoice Paid
+      tags:
+      - Send Template
+  /send/template/invoice-paid:
+    post:
+      consumes:
+      - application/json
+      description: Using template Invoice Paid
+      parameters:
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/utils.InvoicePaid'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/utils.Success'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/utils.BadRequest'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.InternalServerError'
+      security:
+      - X-Auth-Key: []
+      summary: Send email template - Invoice Paid
+      tags:
+      - Send Template
+  /send/template/registered:
+    post:
+      consumes:
+      - application/json
+      description: Using template Registered
+      parameters:
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/utils.Registered'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/utils.Success'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/utils.BadRequest'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.InternalServerError'
+      security:
+      - X-Auth-Key: []
+      summary: Send email template - Registered
+      tags:
+      - Send Template
+  /send/template/rejected:
+    post:
+      consumes:
+      - application/json
+      description: Using template Rejected
+      parameters:
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/utils.Reject'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/utils.Success'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/utils.BadRequest'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.InternalServerError'
+      security:
+      - X-Auth-Key: []
+      summary: Send email template - Rejected
+      tags:
+      - Send Template
+  /send/template/welcome:
+    post:
+      consumes:
+      - application/json
+      description: Using template Welcome
+      parameters:
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/utils.Welcome'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/utils.Success'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/utils.BadRequest'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.InternalServerError'
+      security:
+      - X-Auth-Key: []
+      summary: Send email template - Welcome
+      tags:
+      - Send Template
+securityDefinitions:
+  X-Auth-Key:
+    description: Input your token authorized
+    in: header
+    name: X-Auth-Key
+    type: apiKey
+swagger: "2.0"

@@ -1,6 +1,6 @@
-.env
-template/
 tmp/
-mailapi
-vendor/
 .vscode/
+config.yml
+config.yaml
+bin/main
+bin/mailapi

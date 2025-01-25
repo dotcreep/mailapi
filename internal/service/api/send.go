@@ -3,11 +3,12 @@ package api
 import (
 	"encoding/json"
 	"io"
-	"mailapi/mail"
-	"mailapi/utils"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/dotcreep/mailapi/internal/service/mail"
+	"github.com/dotcreep/mailapi/internal/utils"
 )
 
 type Email struct {
@@ -21,19 +22,19 @@ type Email struct {
 }
 
 func SendEmailAPI(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		utils.RespondJSON(w, http.StatusMethodNotAllowed, map[string]interface{}{
-			"success": false,
-			"message": "Method not allowed",
-		})
+	Json := utils.Json{}
+	cfg, err := utils.OpenYAML()
+	if err != nil {
+		Json.NewResponse(false, w, nil, "internal server error", http.StatusInternalServerError, err.Error())
 		return
 	}
-	tmpPath := os.Getenv("STORAGE")
+	if r.Method != http.MethodPost {
+		Json.NewResponse(false, w, nil, "Method not allowed", http.StatusMethodNotAllowed, nil)
+		return
+	}
+	tmpPath := cfg.Config.Storage
 	if tmpPath == "" {
-		utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
-			"success": false,
-			"message": "Storage path is required",
-		})
+		Json.NewResponse(false, w, nil, "Storage path is required", http.StatusBadRequest, nil)
 		return
 	}
 
@@ -41,19 +42,13 @@ func SendEmailAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("Content-Type") == "application/json" {
 		err := json.NewDecoder(r.Body).Decode(&email)
 		if err != nil {
-			utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
-				"success": false,
-				"message": "Invalid JSON format",
-			})
+			Json.NewResponse(false, w, nil, "Invalid JSON format", http.StatusBadRequest, nil)
 			return
 		}
 	} else {
 		err := r.ParseMultipartForm(10 << 20)
 		if err != nil {
-			utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
-				"success": false,
-				"message": "Unable to parse form",
-			})
+			Json.NewResponse(false, w, nil, "Unable to parse form", http.StatusBadRequest, nil)
 			return
 		}
 		email.To = r.FormValue("to")
@@ -66,36 +61,24 @@ func SendEmailAPI(w http.ResponseWriter, r *http.Request) {
 		for _, fileHeader := range files {
 			size := fileHeader.Size
 			if size > 10*1024*1024 {
-				utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
-					"success": false,
-					"message": "File size is too large. Max size is 10MB",
-				})
+				Json.NewResponse(false, w, nil, "File size is too large. Max size is 10MB", http.StatusBadRequest, nil)
 				return
 			}
 			file, err := fileHeader.Open()
 			if err != nil {
-				utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
-					"success": false,
-					"message": "Unable open file",
-				})
+				Json.NewResponse(false, w, nil, "Unable open file", http.StatusBadRequest, nil)
 				return
 			}
 			defer file.Close()
 			tempFilePath := filepath.Join(tmpPath, fileHeader.Filename)
 			out, err := os.Create(tempFilePath)
 			if err != nil {
-				utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
-					"success": false,
-					"message": "Unable create file",
-				})
+				Json.NewResponse(false, w, nil, "Unable create file", http.StatusBadRequest, nil)
 				return
 			}
 			defer out.Close()
 			if _, err = io.Copy(out, file); err != nil {
-				utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
-					"success": false,
-					"message": "Unable save file",
-				})
+				Json.NewResponse(false, w, nil, "Unable save file", http.StatusBadRequest, nil)
 				return
 			}
 			email.Attach = append(email.Attach, tempFilePath)
@@ -103,24 +86,15 @@ func SendEmailAPI(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if email.To == "" {
-		utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
-			"success": false,
-			"message": "To field is required",
-		})
+		Json.NewResponse(false, w, nil, "To field is required", http.StatusBadRequest, nil)
 		return
 	}
 	if email.Subject == "" {
-		utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
-			"success": false,
-			"message": "Subject field is required",
-		})
+		Json.NewResponse(false, w, nil, "Subject field is required", http.StatusBadRequest, nil)
 		return
 	}
 	if email.Body == "" {
-		utils.RespondJSON(w, http.StatusBadRequest, map[string]interface{}{
-			"success": false,
-			"message": "Body field is required",
-		})
+		Json.NewResponse(false, w, nil, "Body field is required", http.StatusBadRequest, nil)
 		return
 	}
 	if email.TypeMessage == "" {
@@ -128,10 +102,7 @@ func SendEmailAPI(w http.ResponseWriter, r *http.Request) {
 	}
 	info, err := mail.SendEmail(email.To, email.Cc, email.Bcc, email.Subject, email.TypeMessage, email.Body, email.Attach)
 	if err != nil {
-		utils.RespondJSON(w, http.StatusUnprocessableEntity, map[string]interface{}{
-			"success": false,
-			"message": err.Error(),
-		})
+		Json.NewResponse(false, w, nil, err.Error(), http.StatusUnprocessableEntity, nil)
 		return
 	}
 
@@ -139,8 +110,5 @@ func SendEmailAPI(w http.ResponseWriter, r *http.Request) {
 		os.Remove(filePath)
 	}
 
-	utils.RespondJSON(w, http.StatusOK, map[string]interface{}{
-		"success": true,
-		"message": info,
-	})
+	Json.NewResponse(true, w, nil, info, http.StatusOK, nil)
 }
