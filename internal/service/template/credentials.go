@@ -25,6 +25,7 @@ type AccountInfo struct {
 	GuideBookAdminMerchant string
 	GuideBookMerchant      string
 	Website                string
+	QRCode                 string
 }
 
 func Credentials(data AccountInfo) (string, string) {

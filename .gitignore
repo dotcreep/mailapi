@@ -4,3 +4,4 @@ config.yml
 config.yaml
 bin/main
 bin/mailapi
+Makefile.bak

@@ -59,6 +59,9 @@ func SendEmail(to, cc, bcc, subject, typeMessage, body string, attach []string) 
 
 	if len(attach) != 0 {
 		for _, file := range attach {
+			if file == "qrcode.png" {
+				m.Embed(file)
+			}
 			if _, err := os.Stat(file); os.IsNotExist(err) {
 				return "Failed to attach file", fmt.Errorf("file %s does not exist", file)
 			}

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"image/png"
 	"io"
 	"net/http"
 	"os"
@@ -178,6 +179,19 @@ func Credentials(w http.ResponseWriter, r *http.Request) {
 		Json.NewResponse(false, w, nil, "Website url is required", http.StatusBadRequest, nil)
 		return
 	}
+
+	// Add barcode
+	qrCode, err := utils.GenerateBarCodeImage(userData.AppMobile)
+	if err != nil {
+		Json.NewResponse(false, w, nil, "Failed to generate barcode", http.StatusUnprocessableEntity, err)
+		return
+	}
+	qrFile := "qrcode.png"
+	file, _ := os.Create(qrFile)
+	defer file.Close()
+	png.Encode(file, qrCode)
+	email.Attach = append(email.Attach, qrFile)
+
 	accountData := template.AccountInfo{
 		Name:                   userData.NameClient,
 		UserMerchant:           userCredential.UserMerchant,
@@ -186,6 +200,7 @@ func Credentials(w http.ResponseWriter, r *http.Request) {
 		PasswordSuperadmin:     userCredential.PasswordSuperadmin,
 		AppMobile:              userData.AppMobile,
 		HomePage:               homePage,
+		QRCode:                 string(qrFile),
 		EmailAdmin:             mailAdmin,
 		Time:                   time.Date(getYear, time.January, 1, 0, 0, 0, 0, time.Local),
 		PhoneCenter:            phoneCenter,
@@ -197,12 +212,13 @@ func Credentials(w http.ResponseWriter, r *http.Request) {
 	if email.TypeMessage == "" {
 		email.TypeMessage = "text/html"
 	}
+
+	// Send email
 	info, err := mail.SendEmail(email.To, email.Cc, email.Bcc, email.Subject, email.TypeMessage, email.Body, email.Attach)
 	if err != nil {
 		Json.NewResponse(false, w, nil, "Failed to send email", http.StatusUnprocessableEntity, err)
 		return
 	}
-
 	for _, filePath := range email.Attach {
 		os.Remove(filePath)
 	}
